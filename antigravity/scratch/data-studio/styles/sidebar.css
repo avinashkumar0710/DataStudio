@@ -1,0 +1,131 @@
+/* ==============================================
+   DataStudio — Sidebar (sidebar.css)
+   ============================================== */
+
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-section.flex-grow { flex: 1; display: flex; flex-direction: column; }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.7rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.09em;
+}
+.section-add-btn {
+  width: 20px; height: 20px;
+  background: var(--accent-muted); color: var(--accent);
+  border-radius: 50%; font-size: 1.1rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.section-add-btn:hover { background: var(--accent); color: #fff; }
+.section-badge {
+  background: var(--accent-muted); color: var(--accent);
+  font-size: 0.68rem; font-weight: 700;
+  padding: 1px 7px; border-radius: 99px;
+}
+
+/* ── Collapsible section header ── */
+.section-header.collapsible { cursor: pointer; user-select: none; }
+.section-header-right { display: flex; align-items: center; gap: 8px; }
+.collapse-caret {
+  font-size: 0.7rem; color: var(--text-3);
+  transition: transform var(--transition);
+  display: inline-block;
+}
+.section-header.collapsed .collapse-caret { transform: rotate(-90deg); }
+.section-header.collapsed + #field-list { display: none; }
+
+/* ── Data Source Items ── */
+.datasource-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+  border: 1px solid transparent;
+  margin-bottom: 3px;
+}
+.datasource-item:hover { background: var(--bg-hover); }
+.datasource-item.active { background: var(--accent-muted); border-color: rgba(108,99,255,0.25); }
+.ds-icon { font-size: 1rem; flex-shrink: 0; }
+.ds-info { flex: 1; min-width: 0; }
+.ds-name { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-1); }
+.ds-meta { font-size: 0.7rem; color: var(--text-3); margin-top: 1px; }
+.ds-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.ds-view, .ds-delete {
+  opacity: 0; color: var(--text-3); font-size: 0.78rem;
+  transition: opacity var(--transition), color var(--transition), background var(--transition);
+  padding: 2px 5px; border-radius: 4px; background: transparent; border: none; cursor: pointer;
+}
+.datasource-item:hover .ds-view,
+.datasource-item:hover .ds-delete { opacity: 1; }
+.ds-view:hover { color: var(--accent); background: var(--accent-muted); }
+.ds-delete:hover { color: var(--danger); background: var(--danger-muted); }
+
+/* ── Field List ── */
+.field-list { display: flex; flex-direction: column; gap: 1px; max-height: 200px; overflow-y: auto; }
+.field-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 0.79rem; color: var(--text-2);
+  transition: background var(--transition);
+}
+.field-item:hover { background: var(--bg-hover); }
+.field-badge {
+  font-size: 0.62rem; font-weight: 700;
+  padding: 1px 5px; border-radius: 4px;
+  flex-shrink: 0; letter-spacing: 0.03em;
+}
+.fb-number { background: var(--teal-muted);    color: var(--teal);    }
+.fb-string { background: var(--accent-muted);  color: var(--accent);  }
+.fb-date   { background: var(--warning-muted); color: var(--warning); }
+.field-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Filters ── */
+.filter-list { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.filter-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--accent-muted);
+  border: 1px solid rgba(108,99,255,0.25);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 0.77rem;
+}
+.filter-chip-text { flex: 1; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.filter-chip-del { color: var(--text-3); transition: color var(--transition); padding: 1px 3px; border-radius: 3px; }
+.filter-chip-del:hover { color: var(--danger); background: var(--danger-muted); }
+
+.add-filter-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 8px;
+  width: 100%; padding: 8px;
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px dashed rgba(108,99,255,0.35);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem; font-weight: 500;
+  transition: all var(--transition);
+}
+.add-filter-btn:hover { background: var(--accent-muted); border-color: rgba(108,99,255,0.6); }
+
+/* Sidebar empty state */
+.sidebar-empty {
+  text-align: center; padding: 14px 8px;
+  color: var(--text-3); font-size: 0.77rem; font-style: italic;
+}

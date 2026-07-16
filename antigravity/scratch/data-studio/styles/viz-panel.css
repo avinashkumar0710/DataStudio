@@ -1,0 +1,112 @@
+/* ==============================================
+   DataStudio — Visualizations Panel (viz-panel.css)
+   ============================================== */
+
+.viz-panel {
+  width: var(--viz-w);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.viz-header {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.viz-title {
+  font-size: 0.7rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.09em;
+}
+.viz-ds-select {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236a7390' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  background-size: 11px;
+  cursor: pointer;
+}
+.viz-ds-select:focus { border-color: var(--border-focus); outline: none; box-shadow: 0 0 0 3px var(--accent-muted); }
+
+.viz-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.viz-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.viz-card:hover { border-color: var(--border-hover); }
+.viz-card.open { border-color: rgba(108,99,255,0.4); box-shadow: 0 0 0 3px var(--accent-muted); }
+
+.viz-card-head {
+  display: flex; align-items: center; gap: 9px;
+  padding: 12px 12px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 46px;
+}
+.viz-card-icon { font-size: 1.15rem; flex-shrink: 0; }
+.viz-card-label { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text-1); }
+.viz-card-add {
+  width: 26px; height: 26px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-muted); color: var(--accent);
+  border-radius: 6px; font-size: 1.1rem; line-height: 1;
+  transition: all var(--transition);
+}
+.viz-card-add:hover { background: var(--accent); color: #fff; }
+
+.viz-card-body {
+  display: none;
+  padding: 6px 12px 14px;
+  border-top: 1px solid var(--border);
+}
+.viz-card.open .viz-card-body { display: block; }
+
+.viz-card-body .form-group { margin-top: 12px; margin-bottom: 0; }
+.viz-card-body .form-input { padding: 9px 11px; font-size: 0.82rem; }
+.viz-card-body label { font-size: 0.74rem; }
+
+.viz-empty {
+  text-align: center; padding: 24px 12px;
+  color: var(--text-3); font-size: 0.77rem; font-style: italic;
+  line-height: 1.5;
+}
+
+/* ── Field cardinality hint ── */
+.field-hint {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+.field-hint.warn {
+  background: var(--warning-muted);
+  border-color: rgba(255,169,77,0.3);
+  color: var(--warning);
+}
+.field-hint.warn strong { color: var(--text-1); font-weight: 600; }

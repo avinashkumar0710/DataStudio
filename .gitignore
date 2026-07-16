@@ -1,0 +1,14 @@
+# Private AI tool config & data — DO NOT COMMIT
+/antigravity/*
+!/antigravity/scratch/
+/antigravity/scratch/*
+!/antigravity/scratch/data-studio/
+/antigravity/scratch/data-studio/*
+!/antigravity/scratch/data-studio/**
+
+/config/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
