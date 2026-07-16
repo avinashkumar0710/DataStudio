@@ -8,6 +8,9 @@
 
 /config/
 
+# Runtime logs
+antigravity/scratch/data-studio/log/
+
 # OS / editor
 .DS_Store
 Thumbs.db

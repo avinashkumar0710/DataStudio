@@ -3,6 +3,33 @@
    ============================================== */
 'use strict';
 
+/* ── Client-side Logger (sends events to server /api/log) ── */
+const Logger = {
+  _queue: [],
+  _send(level, message, meta) {
+    try {
+      const payload = JSON.stringify({ level, message, meta: meta || null });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/log', new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch('/api/log', { method: 'POST', body: payload, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(()=>{});
+      }
+    } catch (e) { /* logging must never break the app */ }
+  },
+  info(m, meta)  { this._send('INFO',  m, meta); },
+  warn(m, meta)  { this._send('WARN',  m, meta); },
+  error(m, meta) { this._send('ERROR', m, meta); },
+  action(m, meta){ this._send('ACTION', m, meta); },
+};
+
+// Catch any uncaught client errors and log them
+window.addEventListener('error', e => {
+  Logger.error('Uncaught error: ' + (e.message || e.error), { file: e.filename, line: e.lineno });
+});
+window.addEventListener('unhandledrejection', e => {
+  Logger.error('Unhandled promise rejection: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+});
+
 const App = {
   /* ── State ── */
   state: {
@@ -28,6 +55,7 @@ const App = {
     this._renderPage();
     this._renderSidebar();
     this._bindAll();
+    Logger.info('App initialised', { page: this.state.currentPageId, sources: (this.state.pages||[]).length });
     // If the URL contains a shared dashboard, load it (overrides local state)
     if (location.hash.includes('dash=')) {
       this._loadFromShareHash();
@@ -39,6 +67,7 @@ const App = {
   ───────────────────────────────────────────── */
   saveState() {
     try {
+      Logger.action('State saved');
       const payload = {
         ...this.state,
         _sources: DataManager.serialise(),
@@ -116,6 +145,7 @@ const App = {
       const url = `${location.origin}${location.pathname}#dash=${data}`;
       input.value = url;
       input.select();
+      Logger.action('Share link generated', { compressed: compress, bytes: data.length });
       if (status) {
         const kb = Math.round((data.length * 3 / 4) / 1024);
         status.innerHTML = `✅ Link ready (${(compress ? 'compressed' : 'raw')}, ~${kb} KB). Anyone with this link can view your dashboard.`;
@@ -440,6 +470,7 @@ const App = {
       }
 
       this.saveState();
+      Logger.action(isEdit ? 'Widget edited' : 'Widget added (modal)', { type: selectedType, dsId, title });
       this.closeModal('widget-modal');
       this._renderPage();
       this.toast(isEdit ? 'Widget updated!':'Widget added! 🎉','success');
@@ -539,6 +570,7 @@ const App = {
     const { w, h } = this._defaultSize();
     const nextY  = page.widgets.length ? Math.max(...page.widgets.map(ww=>ww.y+ww.h)) : 0;
     page.widgets.push({ id:this._uid(), type, title, x:0, y:nextY, w, h, config });
+    Logger.action('Widget added', { type, dsId, title });
     this.saveState();
     this._renderPage();
     this.toast('Widget added! 🎉','success');
@@ -576,6 +608,7 @@ const App = {
   deleteWidget(id) {
     const page = this.getCurrentPage();
     if (!page) return;
+    Logger.action('Widget deleted', { id });
     ChartEngine.destroy(`canvas-${id}`);
     page.widgets = page.widgets.filter(w=>w.id!==id);
     if (this.selectedWidgetId === id) this.selectedWidgetId = null;
@@ -625,12 +658,14 @@ const App = {
      DATA SOURCES
   ───────────────────────────────────────────── */
   _setActiveSource(id) {
+    Logger.action('Active source changed', { id });
     this.state.activeSourceId = id;
     this.saveState();
     this._renderSidebar();
   },
 
   _removeSource(id) {
+    Logger.action('Data source removed', { id });
     DataManager.deleteSource(id);
     if (this.state.activeSourceId === id) {
       const remaining = Object.keys(DataManager.sources);
@@ -870,6 +905,7 @@ const App = {
   ───────────────────────────────────────────── */
   _toggleTheme() {
     this.state.theme = this.state.theme === 'dark' ? 'light' : 'dark';
+    Logger.action('Theme toggled', { theme: this.state.theme });
     this._applyTheme();
     this.saveState();
     const page = this.getCurrentPage();
@@ -881,7 +917,16 @@ const App = {
      MODAL HELPERS
   ───────────────────────────────────────────── */
   closeModal(id) {
-    document.getElementById(id)?.classList.remove('open');
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Slide-out animation for slide-right modals, then hide
+    if (el.classList.contains('slide-right')) {
+      el.classList.add('closing');
+      el.classList.remove('open');
+      setTimeout(() => el.classList.remove('closing'), 300);
+    } else {
+      el.classList.remove('open');
+    }
     if (id === 'widget-modal' && this._previewChart) {
       try{this._previewChart.destroy();}catch(e){} this._previewChart = null;
     }
@@ -894,6 +939,7 @@ const App = {
   openDataModal(srcId) {
     const src = DataManager.getSource(srcId);
     if (!src) { this.toast('Source not found.','error'); return; }
+    Logger.action('Data view opened', { srcId, name: src.name, rows: src.rowCount });
     document.getElementById('data-modal-title').textContent = src.name;
     document.getElementById('data-modal-meta').textContent =
       `${src.rowCount.toLocaleString()} rows · ${src.columns.length} columns`;

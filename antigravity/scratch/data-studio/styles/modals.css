@@ -473,3 +473,31 @@
   min-width: 44px; max-width: 44px; width: 44px;
 }
 .data-grid .cell-num { text-align: right; font-variant-numeric: tabular-nums; color: var(--teal); }
+
+/* ── Slide-from-right modal (70% width) ── */
+.modal-overlay.slide-right { justify-content: flex-end; align-items: stretch; padding: 0; }
+.modal-overlay.slide-right.open { animation: overlayFade 0.3s ease; }
+@keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-overlay.slide-right .modal {
+  width: 70%;
+  max-width: none;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  border-top: none; border-bottom: none; border-right: none;
+  margin: 0;
+  animation: slideInRight 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.modal-overlay.slide-right.closing .modal {
+  animation: slideOutRight 0.28s cubic-bezier(0.55, 0, 0.67, 0.2) forwards;
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
